@@ -1,0 +1,7 @@
+{
+    "dependencies": ["./my_agent", "./real_estate_sheet.xlsx"],
+    "graphs": {
+      "agent": "./my_agent/agent.py:graph"
+    },
+    "env": ".env"
+}
