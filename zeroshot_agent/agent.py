@@ -4,6 +4,8 @@ from langchain_core.runnables import Runnable, RunnableConfig
 from zeroshot_agent.state import State
 from zeroshot_agent.tools import check_enquiry, get_available_timings
 from datetime import datetime
+from langfuse import Langfuse
+import os
 
 class Assistant:
     def __init__(self, runnable: Runnable):
@@ -13,7 +15,7 @@ class Assistant:
         while True:
             configuration = config.get("configurable", {})
             passenger_id = configuration.get("passenger_id", None)
-            state = {**state, "user_info": passenger_id}
+            state = {**state, "time": datetime.now, "user_info": passenger_id}
             result = self.runnable.invoke(state)
             # If the LLM happens to return an empty response, we will re-prompt it
             # for an actual response.
@@ -28,15 +30,23 @@ class Assistant:
                 break
         return {"messages": result}
 
-
+langfuse = Langfuse(public_key=os.getenv('LANGFUSE_PUBLIC_KEY'), secret_key=os.getenv('LANGFUSE_SECRET_KEY'), host=os.getenv('LANGFUSE_HOST'))
+langfuse_prompt = langfuse.get_prompt('v1', label="latest")
 # Haiku is faster and cheaper, but less accurate
 # llm = ChatAnthropic(model="claude-3-haiku-20240307")
-llm = ChatOpenAI(model="gpt-4o-mini", temperature=1)
+model = langfuse_prompt.config["model"]
+temperature = str(langfuse_prompt.config["temperature"])
+llm = ChatOpenAI(model=model, temperature=temperature)
 # You could swap LLMs, though you will likely want to update the prompts when
 # doing so!
 # from langchain_openai import ChatOpenAI
 
 # llm = ChatOpenAI(model="gpt-4-turbo-preview")
+
+primary_assistant_prompt = ChatPromptTemplate.from_template(
+        langfuse_prompt.get_langchain_prompt(),
+        metadata={"langfuse_prompt": langfuse_prompt},
+    )
 
 primary_assistant_prompt = ChatPromptTemplate.from_messages(
     [
