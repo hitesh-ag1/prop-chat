@@ -4,3 +4,7 @@
 __pycache__/
 logs/
 __init__.py
+gcalendar.json
+real-estate-bot.json
+credentials.json
+.DS_Store

@@ -49,8 +49,9 @@ async def match_profile_agent(state: State) -> Command[Literal[END]]:
     if parsed["match"]:
         print("Profile Matched")
         goto='appointment_agent'
-        return {"messages": [AIMessage(content="Profile matched bud, thanks")]}
-        # return Command(update=parsed, goto=goto)
+        update = {"messages": [AIMessage(content="Profile matched bud, thanks")]}
+        return Command(goto=goto, update=state)
+
     else:
         print("Profile Not Matched")
         goto='negotiate_details_agent'

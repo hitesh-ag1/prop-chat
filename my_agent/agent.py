@@ -9,6 +9,7 @@ from my_agent.utils.agents.check_profile.agent import profile_chk_agent
 from my_agent.utils.agents.extract_profile.agent import extract_profile_agent
 from my_agent.utils.agents.match_profile.agent import match_profile_agent
 from my_agent.utils.agents.negotiate_details.agent import negotiate_details_agent
+from my_agent.utils.agents.book_appointment.agent import book_appointment
 from my_agent.utils.agents.human_interrupt.agent import human_node
 
 from my_agent.utils.state import AgentState
@@ -48,7 +49,7 @@ workflow.add_node("human_agent", human_node)
 workflow.add_node("extract_profile_agent", extract_profile_agent)
 workflow.add_node("match_profile_agent", match_profile_agent)
 workflow.add_node("negotiate_details_agent", negotiate_details_agent)
-# workflow.add_node("schedule_appointment_agent", schedule_appointment_agent)
+workflow.add_node("appointment_agent", book_appointment)
 # workflow.add_node("negotiate_details_agent", negotiate_details_agent)
 # workflow.add_node("compile_followup", compile_followup)
 

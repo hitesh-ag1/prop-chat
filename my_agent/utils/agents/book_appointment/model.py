@@ -29,15 +29,15 @@ class State(TypedDict):
     negotiable: bool | None
     keys: list[str] | None
 
-# class NegotiateDetails(TypedDict):
-#     """Negotiate the details with the user. Do not make up values, leave fields as null if you don't know their value."""
-    
-#     match: bool | None
-#     messages: str | None
-#     end: bool | None
+    suggested_slots: list[str] | None
+    user_slots: list[str] | None
+    booked_slot: str | None
 
-#     followup: Annotated[
-#         str | None,
-#         ...,
-#         "If any errors occur, please tell them here.",
-#     ]
+class AppointmentDetails(TypedDict):
+    """Choose the best action along with message, suggested slots, user slots and booked slot."""
+
+    message: str | None
+    action: str | None
+    suggested_slots: list[str] | None
+    user_slots: list[str] | None
+    booked_slot: str | None

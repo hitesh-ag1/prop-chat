@@ -5,7 +5,7 @@ from langgraph.graph import END
 from my_agent.utils.agents.human_interrupt.model import HumanState
 from my_agent.logging import logger
 
-def human_node(state: HumanState) -> Command[Literal["match_profile_agent", "extract_profile_agent", "enquiry_extractor_agent", END]]:
+def human_node(state: HumanState) -> Command[Literal["match_profile_agent", "extract_profile_agent", "enquiry_extractor_agent", "appointment_agent", END]]:
     logger.info("-----Human Agent-----")
     # Extract a tool call from the state and create an interrupt request
     request = HumanInterrupt(
