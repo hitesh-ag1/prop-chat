@@ -59,6 +59,7 @@ async def check_enquiry(
         message = f"Sorry, '{unit_name}' is not currently available with this agent. Please try another property."
         raise ValueError(message)
     
+    matched_data['Availability'] = matched_data['Availability'].astype(str)
     matched_data = matched_data[
         (matched_data['Availability'].str.lower() != 'booked')
     ]
@@ -68,9 +69,9 @@ async def check_enquiry(
         raise ValueError(message)
     
     if "common" in room.lower():
-        room_type = "common"
+        room = "common"
 
-    matched_data_room = matched_data[matched_data['Room'].str.lower() == room_type.lower()]
+    matched_data_room = matched_data[matched_data['Room'].str.lower() == room.lower()]
     if matched_data_room.empty:
         available_rooms = ', '.join(matched_data['Room'].unique())
         message = f"Sorry, the requested room type ('{room}') is not available at '{unit_name}'. Available room types: {available_rooms}."
