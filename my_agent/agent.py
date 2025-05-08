@@ -1,58 +1,36 @@
-from typing import TypedDict, Literal
+from langchain_openai import ChatOpenAI
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.runnables import Runnable, RunnableConfig
+from zeroshot_agent.state import State
+from zeroshot_agent.tools import check_enquiry, get_available_timings
+from datetime import datetime
+from langchain import hub as prompts
 
-from langgraph.graph import StateGraph, START, END
+class Assistant:
+    def __init__(self, runnable: Runnable):
+        self.runnable = runnable
 
-from my_agent.utils.agents.intent.agent import intent_agent
-from my_agent.utils.agents.extract_enquiry.agent import enquiry_extractor_agent
-from my_agent.utils.agents.check_enquiry.agent import enquiry_chk_agent
-from my_agent.utils.agents.check_profile.agent import profile_chk_agent
-from my_agent.utils.agents.extract_profile.agent import extract_profile_agent
-from my_agent.utils.agents.match_profile.agent import match_profile_agent
-from my_agent.utils.agents.negotiate_details.agent import negotiate_details_agent
-from my_agent.utils.agents.book_appointment.agent import book_appointment
-from my_agent.utils.agents.human_interrupt.agent import human_node
+    def __call__(self, state: State, config: RunnableConfig):
+        while True:
+            configuration = config.get("configurable", {})
+            passenger_id = configuration.get("passenger_id", None)
+            state = {**state, "time": datetime.now, "user_info": passenger_id}
+            result = self.runnable.invoke(state)
+            # If the LLM happens to return an empty response, we will re-prompt it
+            # for an actual response.
+            if not result.tool_calls and (
+                not result.content
+                or isinstance(result.content, list)
+                and not result.content[0].get("text")
+            ):
+                messages = state["messages"] + [("user", "Respond with a real output.")]
+                state = {**state, "messages": messages}
+            else:
+                break
+        return {"messages": result}
 
-from my_agent.utils.state import AgentState
+llm = ChatOpenAI(model="gpt-4o-mini", temperature=1)
+primary_assistant_prompt = prompts.pull("realtor-assist:a8dcb23e")
 
-from my_agent.logging import logger
-from my_agent.utils.agents.negotiate_details.model import State 
-
-
-# Define the config
-class GraphConfig(TypedDict):
-    model_name: Literal["openai"]
-
-# Define config
-config = {"configurable": {"thread_id": "2"}}
-
-    
-def should_continue(state):
-    messages = state["messages"]
-    if len(messages) > 6:
-        return "end"
-    elif messages[-1].content == "FINISHED":
-        return "end"
-    else:
-        return "continue"
-
-# checkpointer = asyncio.run(init_db_pool())
-
-# Define a new graph
-workflow = StateGraph(AgentState, config_schema=GraphConfig)
-
-# Define the two nodes we will cycle between
-workflow.add_node("intent_classifier", intent_agent)
-workflow.add_node("enquiry_extractor_agent", enquiry_extractor_agent)
-workflow.add_node("check_enquiry_agent", enquiry_chk_agent)
-workflow.add_node("check_profile_agent", profile_chk_agent)
-workflow.add_node("human_agent", human_node)
-workflow.add_node("extract_profile_agent", extract_profile_agent)
-workflow.add_node("match_profile_agent", match_profile_agent)
-workflow.add_node("negotiate_details_agent", negotiate_details_agent)
-workflow.add_node("appointment_agent", book_appointment)
-# workflow.add_node("negotiate_details_agent", negotiate_details_agent)
-# workflow.add_node("compile_followup", compile_followup)
-
-workflow.set_entry_point("intent_classifier")
-
-graph = workflow.compile()
+part_1_tools = [check_enquiry, get_available_timings]
+part_1_assistant_runnable = primary_assistant_prompt | llm.bind_tools(part_1_tools)

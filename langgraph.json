@@ -1,7 +1,7 @@
 {
-    "dependencies": ["./zeroshot_agent", "./real_estate_sheet.xlsx"],
+    "dependencies": ["./my_agent", "./real_estate_sheet.xlsx"],
     "graphs": {
-      "agent": "./zeroshot_agent/graph.py:part_1_graph"
+      "agent": "./my_agent/graph.py:part_1_graph"
     },
     "env": ".env"
 }
