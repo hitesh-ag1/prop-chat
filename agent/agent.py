@@ -1,9 +1,9 @@
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, StateGraph, START
 from langgraph.prebuilt import tools_condition
-from zeroshot_agent.agent import Assistant, part_1_assistant_runnable, part_1_tools
-from zeroshot_agent.utils import create_tool_node_with_fallback
-from zeroshot_agent.state import State
+from utils.nodes import Assistant, part_1_assistant_runnable, part_1_tools
+from utils.utils import create_tool_node_with_fallback
+from utils.states import State
 
 builder = StateGraph(State)
 
@@ -18,4 +18,4 @@ builder.add_conditional_edges(
 )
 builder.add_edge("tools", "assistant")
 
-part_1_graph = builder.compile().with_config()
+graph = builder.compile().with_config()

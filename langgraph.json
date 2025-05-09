@@ -1,7 +1,10 @@
 {
-    "dependencies": ["./my_agent", "./real_estate_sheet.xlsx"],
+    "dependencies": ["./agent"],
     "graphs": {
-      "agent": "./my_agent/graph.py:part_1_graph"
+      "agent": "./agent/agent.py:graph"
     },
-    "env": ".env"
+    "env": ".env",
+    "dockerfile_lines": [
+      "COPY ./real_estate_sheet.xlsx /api/"
+    ]
 }

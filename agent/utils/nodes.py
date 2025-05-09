@@ -1,8 +1,8 @@
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import Runnable, RunnableConfig
-from zeroshot_agent.state import State
-from zeroshot_agent.tools import check_enquiry, get_available_timings
+from utils.states import State
+from utils.tools import check_enquiry, get_available_timings
 from datetime import datetime
 from langchain import hub as prompts
 
