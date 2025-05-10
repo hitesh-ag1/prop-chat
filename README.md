@@ -8,7 +8,7 @@ Propchat integrates dynamic multi-step reasoning, Excel-based structured data, e
 
 ## 📸 Demo
 
-![Conversation Demo](media/propchat_demo_2.gif)  
+![Conversation Demo](media/demo.gif)  
 *Sample Conversation.*
 
 ---
