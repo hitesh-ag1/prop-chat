@@ -1,4 +1,4 @@
-# 🏠 Propchat: Intelligent Rental Lead Assistant for Singapore Agents
+# 🏠 Propchat: Chatbot to automate lead qualification for real estate agents in Singapore
 
 **A LangGraph-powered, tool-augmented conversational AI agent designed to automate and optimize rental lead management for real estate agents in Singapore.**
 
@@ -8,8 +8,8 @@ Propchat integrates dynamic multi-step reasoning, Excel-based structured data, e
 
 ## 📸 Demo
 
-![Conversation Demo](media/demo.gif)  
 *Sample Conversation.*
+![Conversation Demo](media/demo.gif)  
 
 ---
 
