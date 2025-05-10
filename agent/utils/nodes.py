@@ -30,7 +30,7 @@ class Assistant:
         return {"messages": result}
 
 llm = ChatOpenAI(model="gpt-4o-mini", temperature=1)
-primary_assistant_prompt = prompts.pull("realtor-assist:a8dcb23e")
+primary_assistant_prompt = prompts.pull("realtor-assist:7a1c1eff")
 
 part_1_tools = [check_enquiry, get_available_timings]
 part_1_assistant_runnable = primary_assistant_prompt | llm.bind_tools(part_1_tools)

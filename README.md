@@ -1,119 +1,161 @@
-# 🏡 Realtor Assist AI — Intelligent Rental Lead Assistant for Singapore Agents
+# 🏠 Propchat: Intelligent Rental Lead Assistant for Singapore Agents
 
-**A next-generation conversational AI assistant for real estate agents in Singapore.**  
-Realtor Assist AI prescreens and qualifies rental leads, matches them to listings, negotiates intelligently, and even books viewings—so you focus on closing deals, not chasing leads.
+**A LangGraph-powered, tool-augmented conversational AI agent designed to automate and optimize rental lead management for real estate agents in Singapore.**
 
----
-
-## ✨ Key Features
-
-- 🧠 **Conversational Lead Screening**  
-  Engages leads in natural chat to extract rental enquiry details automatically.
-
-- 🏢 **Smart Listing Matching**  
-  Matches user preferences (condo, room type, budget) against your listings using `real_estate_sheet.xlsx`.
-
-- 📋 **Profile Extraction & Validation**  
-  Captures lead details like age, profession, citizenship, move-in date, lease period, and validates completeness.
-
-- 🔍 **Profile-Landlord Matching**  
-  Compares lead profiles with each landlord’s stated criteria to ensure suitability.
-
-- 🤝 **Intelligent Negotiation**  
-  Attempts to close the gap for near-matches by negotiating rental terms or flagging flexible conditions.
-
-- 📅 **Automated Appointment Booking** *(coming soon)*  
-  Books viewings for qualified leads—zero back-and-forth needed.
-
-- 🧑‍💼 **Human-in-the-Loop**  
-  Escalates to a human agent if the bot is uncertain or clarification is needed.
+Propchat integrates dynamic multi-step reasoning, Excel-based structured data, evaluation pipelines using LangSmith, and containerized deployment for real-world robustness.
 
 ---
 
-## 🚀 Quick Start
+## 📸 Demo
 
-### ✅ Prerequisites
-
-- Python `>= 3.9`
-- `langchain`, `langgraph`, and related dependencies
-- An LLM API (e.g., OpenAI)
-- `real_estate_sheet.xlsx` — your listings and landlord info
+![Conversation Demo](media/propchat_demo_2.gif)  
+*Sample Conversation.*
 
 ---
 
-### ⚙️ Installation
+## 🧠 System Overview
 
-```bash
-git clone https://github.com/<your-username>/realtor-assist.git
-cd realtor-assist
-pip install -r requirements.txt
+Propchat is built using LangGraph to model multi-turn agentic behavior for real estate workflows. The assistant is capable of:
+
+- Structured tool invocation with memory and state-awareness.
+- Excel-based data handling to align with local agent practices.
+- Autonomous scheduling, lead qualification, and negotiation flow control.
+- Observable and evaluable traces using LangSmith for continuous improvement.
+
+It demonstrates advanced agentic patterns with introspectable flow control, model evaluation feedback loops, and a production-ready deployment interface.
+
+---
+
+## 🗂 Directory Structure
+
 ```
-
-Create a `.env` file with your API keys and config.
-
-Start the agent workflow (CLI, background job, or web endpoint).
-
----
-
-## 🧩 Architecture Overview
-
-The bot uses a **StateGraph** to orchestrate tasks via modular AI agents, defined in `my_agent/agent.py`.
-
-### 🛠️ Agents & Workflow
-
-| Agent              | Role                                                  |
-|--------------------|-------------------------------------------------------|
-| `intent_classifier`| Determines if the message is a rental enquiry         |
-| `enquiry_extractor`| Parses enquiry info (condo, type, price)              |
-| `enquiry_checker`  | Matches enquiry to available listings                 |
-| `profile_extractor`| Gathers user's profile data                           |
-| `profile_checker`  | Validates profile completeness                        |
-| `profile_matcher`  | Compares profile with landlord preferences            |
-| `negotiation_agent`| Negotiates when needed                                |
-| `human_interrupt`  | Escalates to human if stuck                           |
-
----
-
-## 📁 File Structure
-
-```text
 realtor-assist/
 │
-├── my_agent/
-│   ├── agent.py          # Orchestration graph
-│   ├── logging.py        # Logging setup
-│   ├── settings.py       # Configs & model setup
-│   └── utils/
-│       ├── agents/       # All task-specific agent logic
-│       └── state.py      # State definitions
+├── Dockerfile                     # Docker container definition
+├── docker-compose.yaml            # Multi-service deployment
+├── langgraph.json                 # LangGraph agent definition
+├── real_estate_sheet.xlsx         # Excel source for listing data
 │
+├── evaluation/                    # Evaluation suite (LangSmith-driven)
+│   ├── dataset.py                 # Generates evaluation dataset from traces
+│   ├── helper.py                  # LangSmith API utilities
+│   └── test.py                    # Prompt/model-level test runner
+│
+├── agent/
+│   ├── agent.py                   # LangGraph conversational agent
+│   ├── requirements.txt           # Python dependencies
+│   └── utils/
+│       ├── nodes.py               # LangGraph node definitions
+│       ├── states.py              # Custom state schema
+│       ├── tools.py               # Tools used by the agent
+│       └── utils.py               # Misc utilities
 ```
 
 ---
 
-## 🔧 Customization
+## ⚙️ LangGraph Agent Architecture
 
-- ✏️ Modify agent behavior in `my_agent/utils/agents/`
-- 🔁 Swap out LLMs or APIs via `settings.py`
-- 🗂️ Adapt listing data by editing `real_estate_sheet.xlsx`
-- 📆 Extend human-in-the-loop or appointment logic
+Propchat uses LangGraph to define a state machine representing the assistant's reasoning flow.
 
----
-
-## 📊 Logging & Monitoring
-
-- Logs saved in `logs/` directory (per day)
-- Controlled via `my_agent/logging.py`
+<!-- ![LangGraph Architecture](media/langgraph-architecture.png)  
+*Placeholder: Diagram of LangGraph state machine.* -->
 
 ---
 
-## 🔐 Security & Best Practices
+## 🧰 Tool Layer
 
-- API keys and sensitive config are stored in `.env` (excluded from version control)
-- All fields are validated. If user info is missing, the agent gracefully handles with `None`—no hallucinations.
+Custom tools are defined in `agent/utils/tools.py`, built with LangChain’s Tool interface and integrated into the graph.
+
+### 🧩 Available Tools
+- `get_agent_listings`: Read listing data from `.xlsx` file.
+- `check_listing_availability`: Query availability against structured entries.
+  
+These tools interface directly with structured tabular data, supporting workflows familiar to Singaporean real estate agents.
 
 ---
 
-## 🌟 Support the Project
+## 📊 Evaluation with LangSmith
 
-If this project saves you time or inspires your own AI real estate tools, **give it a star ⭐** and share it with your team or network!
+Propchat includes a rigorous evaluation loop using LangSmith:
+
+- **Trace-based dataset generation**: Evaluates real-world interactions.
+- **Multi-model prompt comparison**: Benchmarks performance across configurations.
+- **Judged on**:
+  - ✅ **Correctness**
+  - ✂️ **Conciseness**
+  - 🚫 **Hallucination avoidance**
+
+Traces are automatically logged to build datasets using `evaluation/dataset.py`. Evaluations are triggered via `test.py`.
+
+![LangSmith Evaluation 1](media/eval.png)  
+![LangSmith Evaluation 2](media/eval2.png)  
+
+---
+
+## 📡 Observability
+
+Using LangSmith’s observability layer:
+
+- Trace every interaction with token-level introspection.
+- Compare different runs and prompt versions.
+- Identify failure modes (tool misuse, hallucination, broken logic paths, high latency).
+
+![LangSmith Observability 1](media/observe.png)  
+![LangSmith Traces](media/traces.png)
+
+---
+
+## 📦 Installation & Deployment
+
+### 🔧 1. Clone the Repository
+
+```bash
+git clone https://github.com/yourname/realtor-assist.git
+cd realtor-assist
+```
+
+### 🔐 2. Configure Environment Variables
+
+Create a `.env` file in the root using `.env.example`:
+
+### 🐳 3. Deploy with Docker Compose
+
+```bash
+docker-compose up --build
+```
+
+This launches the agent and any necessary services. Ideal for local testing, remote deployment, or staging environments.
+
+---
+
+## 📅 Roadmap
+
+- ✅ Excel-based structured listing support  
+- ✅ Agentic LangGraph flows with memory & tools  
+- ✅ End-to-end LangSmith evaluation suite  
+- ✅ Dockerized CI/CD pipeline  
+- 🔜 WhatsApp integration  
+- 🔜 Auto-sync with calendar availability  
+- 🔜 Two-way landlord/tenant messaging module  
+
+---
+
+## 🎓 Technical Highlights
+
+| Feature                        | Description |
+|-------------------------------|-------------|
+| 🔄 **LangGraph Agent**         | Custom state-machine-based agent with nodes, memory, and transitions. |
+| 📈 **LangSmith Evaluation**    | LLM-as-judge metrics: correctness, conciseness, hallucination. |
+| 🧩 **Excel Tooling**           | Agents operate directly over `.xlsx` sheets for local workflows. |
+| 📦 **Docker Deployment**       | Easily containerized and deployable with Docker Compose. |
+| 📡 **Full Observability**      | Trace logs, prompt diffs, and live monitoring via LangSmith. |
+| 🔬 **Model Testing**           | Swap prompts/models to benchmark performance. |
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions in tooling, UI integrations (e.g., WhatsApp frontend), or evaluation enhancements. PRs, issues, and prompt optimizations are encouraged.
+
+*Built with ❤️ to make every realtor’s day a little smoother.*
+
